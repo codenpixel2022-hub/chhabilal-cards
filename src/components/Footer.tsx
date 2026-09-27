@@ -21,7 +21,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenSampleModal 
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
               <img 
-                src="./logo.png" 
+                src={`${import.meta.env.BASE_URL}logo.png`} 
                 alt="Chhabilal Cards Logo" 
                 className="w-12 h-12 object-contain rounded-full border-2 border-[#D4AF37]/70 shadow-md bg-white p-0.5"
               />

@@ -105,7 +105,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center gap-2 sm:gap-3 text-left group shrink min-w-0"
           >
             <img 
-              src="./logo.png" 
+              src={`${import.meta.env.BASE_URL}logo.png`} 
               alt="Chhabilal Cards Logo" 
               className="w-9 h-9 sm:w-11 sm:h-11 shrink-0 object-contain rounded-full shadow-md border-2 border-[#D4AF37]/70 bg-white group-hover:scale-105 transition-transform duration-300"
             />
