@@ -1,0 +1,6 @@
+{
+  "name": "Chhabilal Cards - Wedding Cards & Stationery Hub",
+  "description": "Premier wedding cards designer, luxury invitation manufacturer, and office & school stationery supplier in Jharsuguda, Odisha.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
