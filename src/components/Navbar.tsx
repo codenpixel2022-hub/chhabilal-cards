@@ -104,9 +104,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('wedding-cards')}
             className="flex items-center gap-3 text-left group"
           >
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-[#8B0000] flex items-center justify-center text-white shadow-xs border border-[#6D0000] group-hover:bg-[#6D0000] transition-colors">
-              <span className="font-royal font-bold text-lg sm:text-xl text-[#FAF9F6]">CC</span>
-            </div>
+            <img 
+              src="./logo.png" 
+              alt="Chhabilal Cards Logo" 
+              className="w-11 h-11 sm:w-13 sm:h-13 object-contain rounded-full shadow-md border-2 border-[#D4AF37]/70 bg-white group-hover:scale-105 transition-transform duration-300"
+            />
             <div>
               <div className="flex items-baseline gap-2">
                 <span className="font-royal font-bold text-xl sm:text-2xl tracking-tighter text-[#8B0000]">

@@ -20,9 +20,11 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenSampleModal 
           {/* Brand & Overview */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#8B0000] flex items-center justify-center text-[#F2EDE4] font-royal font-bold text-xl border border-[#D4AF37]/50 shadow-sm">
-                CC
-              </div>
+              <img 
+                src="./logo.png" 
+                alt="Chhabilal Cards Logo" 
+                className="w-12 h-12 object-contain rounded-full border-2 border-[#D4AF37]/70 shadow-md bg-white p-0.5"
+              />
               <div>
                 <span className="font-royal font-bold text-xl text-[#FAF9F6] tracking-wide block">
                   CHHABILAL CARDS
