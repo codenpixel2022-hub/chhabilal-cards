@@ -662,69 +662,69 @@ Please provide a printing quote and digital proof for this card design.`;
           {/* THE WEDDING CARD VISUAL STAGE */}
           <div 
             ref={cardPreviewRef}
-            className={`relative rounded-2xl ${currentTheme.cardBg} border-2 ${currentTheme.borderColor} p-6 sm:p-8 shadow-md transition-all duration-300 overflow-hidden text-center`}
+            className={`relative rounded-2xl ${currentTheme.cardBg} border-2 ${currentTheme.borderColor} p-4 sm:p-8 shadow-md transition-all duration-300 overflow-hidden text-center max-w-full`}
           >
             {/* Subtle ornate border box */}
-            <div className={`absolute inset-3 border ${currentTheme.borderPattern} rounded-xl pointer-events-none`}></div>
-            <div className={`absolute inset-4 border border-dashed ${currentTheme.borderPattern} rounded-lg pointer-events-none opacity-40`}></div>
+            <div className={`absolute inset-2 sm:inset-3 border ${currentTheme.borderPattern} rounded-xl pointer-events-none`}></div>
+            <div className={`absolute inset-3 sm:inset-4 border border-dashed ${currentTheme.borderPattern} rounded-lg pointer-events-none opacity-40`}></div>
 
             {/* Corner Decorative Dots/Accents */}
-            <div className="absolute top-5 left-5 text-[#D4AF37] text-xs">❖</div>
-            <div className="absolute top-5 right-5 text-[#D4AF37] text-xs">❖</div>
-            <div className="absolute bottom-5 left-5 text-[#D4AF37] text-xs">❖</div>
-            <div className="absolute bottom-5 right-5 text-[#D4AF37] text-xs">❖</div>
+            <div className="absolute top-3 sm:top-5 left-3 sm:left-5 text-[#D4AF37] text-xs">❖</div>
+            <div className="absolute top-3 sm:top-5 right-3 sm:right-5 text-[#D4AF37] text-xs">❖</div>
+            <div className="absolute bottom-3 sm:bottom-5 left-3 sm:left-5 text-[#D4AF37] text-xs">❖</div>
+            <div className="absolute bottom-3 sm:bottom-5 right-3 sm:right-5 text-[#D4AF37] text-xs">❖</div>
 
             {/* TAB 1: MAIN VIVAH CARD */}
             {activeViewTab === 'main' && (
-              <div className="relative z-10 space-y-4 py-2">
+              <div className="relative z-10 space-y-3 sm:space-y-4 py-1 sm:py-2">
                 {/* Auspicious Header */}
                 <div className="space-y-1">
-                  <div className="text-2xl font-royal tracking-widest text-[#D4AF37]">
+                  <div className="text-lg sm:text-2xl font-royal tracking-widest text-[#D4AF37] break-words">
                     {AUSPICIOUS_SYMBOLS.find(s => s.id === state.auspiciousSymbol)?.symbol || '॥ श्री गणेशाय नमः ॥'}
                   </div>
-                  <div className={`text-[11px] ${currentTheme.subTextColor} whitespace-pre-line font-serif-luxury italic leading-relaxed`}>
+                  <div className={`text-[10px] sm:text-[11px] ${currentTheme.subTextColor} whitespace-pre-line font-serif-luxury italic leading-relaxed`}>
                     {state.topBlessing}
                   </div>
                 </div>
 
                 {/* Inviting Words */}
-                <div className="pt-2">
-                  <p className={`text-[11px] uppercase tracking-widest ${currentTheme.subTextColor} font-sans font-medium`}>
+                <div className="pt-1 sm:pt-2">
+                  <p className={`text-[10px] sm:text-[11px] uppercase tracking-widest ${currentTheme.subTextColor} font-sans font-medium`}>
                     Cordially request the honour of your presence at the auspicious wedding of
                   </p>
                 </div>
 
                 {/* Groom & Bride Highlight Banner */}
-                <div className="py-3 space-y-2">
+                <div className="py-2 sm:py-3 space-y-1.5 sm:space-y-2">
                   <div>
-                    <h3 className={`font-royal text-2xl sm:text-3xl font-bold ${currentTheme.goldText} tracking-wide drop-shadow-sm`}>
+                    <h3 className={`font-royal text-xl sm:text-3xl font-bold ${currentTheme.goldText} tracking-wide drop-shadow-sm break-words`}>
                       {state.groomName}
                     </h3>
-                    <p className={`text-[11px] ${currentTheme.subTextColor} mt-0.5 font-sans`}>
+                    <p className={`text-[10px] sm:text-[11px] ${currentTheme.subTextColor} mt-0.5 font-sans`}>
                       Son of {state.groomParents}
                     </p>
-                    <p className={`text-[10px] ${currentTheme.subTextColor} opacity-80 font-sans`}>
+                    <p className={`text-[9px] sm:text-[10px] ${currentTheme.subTextColor} opacity-80 font-sans`}>
                       Grandson of {state.groomGrandParents} ({state.groomNative})
                     </p>
                   </div>
 
                   {/* Sacred Knot Symbol */}
-                  <div className="flex items-center justify-center gap-3 py-1">
-                    <span className="h-px w-12 bg-[#D4AF37]/50"></span>
-                    <span className="font-royal text-xs font-bold text-[#D4AF37] uppercase tracking-widest">
+                  <div className="flex items-center justify-center gap-2 sm:gap-3 py-1">
+                    <span className="h-px w-8 sm:w-12 bg-[#D4AF37]/50"></span>
+                    <span className="font-royal text-[10px] sm:text-xs font-bold text-[#D4AF37] uppercase tracking-widest">
                       Weds
                     </span>
-                    <span className="h-px w-12 bg-[#D4AF37]/50"></span>
+                    <span className="h-px w-8 sm:w-12 bg-[#D4AF37]/50"></span>
                   </div>
 
                   <div>
-                    <h3 className={`font-royal text-2xl sm:text-3xl font-bold ${currentTheme.goldText} tracking-wide drop-shadow-sm`}>
+                    <h3 className={`font-royal text-xl sm:text-3xl font-bold ${currentTheme.goldText} tracking-wide drop-shadow-sm break-words`}>
                       {state.brideName}
                     </h3>
-                    <p className={`text-[11px] ${currentTheme.subTextColor} mt-0.5 font-sans`}>
+                    <p className={`text-[10px] sm:text-[11px] ${currentTheme.subTextColor} mt-0.5 font-sans`}>
                       Daughter of {state.brideParents}
                     </p>
-                    <p className={`text-[10px] ${currentTheme.subTextColor} opacity-80 font-sans`}>
+                    <p className={`text-[9px] sm:text-[10px] ${currentTheme.subTextColor} opacity-80 font-sans`}>
                       Granddaughter of {state.brideGrandParents} ({state.brideNative})
                     </p>
                   </div>

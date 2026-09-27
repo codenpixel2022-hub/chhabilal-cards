@@ -54,72 +54,72 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-[#FAF9F6]/95 backdrop-blur-md border-b border-[#E5E1DA] shadow-xs">
+    <header className="sticky top-0 z-40 bg-[#FAF9F6]/95 backdrop-blur-md border-b border-[#E5E1DA] shadow-xs w-full max-w-full overflow-hidden">
       {/* Top utility bar */}
-      <div className="bg-[#8B0000] text-[#FAF9F6] text-xs py-2 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-4 flex-wrap">
-            <span className="flex items-center gap-1.5 text-[#F2EDE4]">
-              <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" />
-              Rajpur, Brajarajnagar, Jharsuguda, Odisha
+      <div className="bg-[#8B0000] text-[#FAF9F6] text-xs py-1.5 px-3 sm:px-6">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 text-[11px] sm:text-xs">
+          <div className="flex items-center gap-2 sm:gap-4 truncate">
+            <span className="flex items-center gap-1 text-[#F2EDE4] truncate">
+              <MapPin className="w-3 h-3 text-[#D4AF37] shrink-0" />
+              <span className="truncate">Brajarajnagar, Jharsuguda, Odisha</span>
             </span>
-            <span className="hidden sm:flex items-center gap-1 text-[#F2EDE4]/90">
-              <Clock className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <span className="hidden md:flex items-center gap-1 text-[#F2EDE4]/90">
+              <Clock className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
               Open Daily: 8:30 AM – 9:00 PM
             </span>
-            <span className="hidden md:inline-flex items-center gap-1 bg-black/20 text-[#F2EDE4] px-2.5 py-0.5 rounded-full text-[11px] font-sans tracking-wide">
-              <Award className="w-3 h-3 text-[#D4AF37]" />
-              GST Registered Since 2017 • 4.8★ Justdial
+            <span className="hidden lg:inline-flex items-center gap-1 bg-black/20 text-[#F2EDE4] px-2 py-0.5 rounded-full text-[10px] font-sans tracking-wide">
+              <Award className="w-3 h-3 text-[#D4AF37] shrink-0" />
+              GST Registered • 4.8★ Justdial
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <a 
               href={`tel:${BUSINESS_INFO.phone1}`}
               className="flex items-center gap-1 hover:text-white transition-colors"
             >
-              <Phone className="w-3 h-3 text-[#D4AF37]" />
-              <span className="font-medium">{BUSINESS_INFO.phone1}</span>
+              <Phone className="w-3 h-3 text-[#D4AF37] shrink-0" />
+              <span className="font-medium text-[11px] sm:text-xs">{BUSINESS_INFO.phone1}</span>
             </a>
-            <span className="text-[#D4AF37]/50">|</span>
+            <span className="text-[#D4AF37]/50 hidden sm:inline">|</span>
             <a 
               href={`https://wa.me/${BUSINESS_INFO.whatsapp}?text=${encodeURIComponent('Hello Chhabilal Cards, I would like to inquire about wedding cards and stationery catalog.')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-[#FAF9F6] hover:text-[#D4AF37] transition-colors font-medium"
+              className="hidden sm:flex items-center gap-1 text-[#FAF9F6] hover:text-[#D4AF37] transition-colors font-medium text-[11px] sm:text-xs"
             >
-              <MessageCircle className="w-3.5 h-3.5 text-[#D4AF37]" />
-              <span>WhatsApp Inquiry</span>
+              <MessageCircle className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
+              <span>WhatsApp</span>
             </a>
           </div>
         </div>
       </div>
 
       {/* Main navigation */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-        <div className="flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5">
+        <div className="flex items-center justify-between gap-2">
           {/* Brand Logo / Name */}
           <button 
             id="nav-brand-btn"
             onClick={() => setActiveTab('wedding-cards')}
-            className="flex items-center gap-3 text-left group"
+            className="flex items-center gap-2 sm:gap-3 text-left group shrink min-w-0"
           >
             <img 
               src="./logo.png" 
               alt="Chhabilal Cards Logo" 
-              className="w-11 h-11 sm:w-13 sm:h-13 object-contain rounded-full shadow-md border-2 border-[#D4AF37]/70 bg-white group-hover:scale-105 transition-transform duration-300"
+              className="w-9 h-9 sm:w-11 sm:h-11 shrink-0 object-contain rounded-full shadow-md border-2 border-[#D4AF37]/70 bg-white group-hover:scale-105 transition-transform duration-300"
             />
-            <div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-royal font-bold text-xl sm:text-2xl tracking-tighter text-[#8B0000]">
+            <div className="min-w-0">
+              <div className="flex items-baseline gap-1 sm:gap-2">
+                <span className="font-royal font-bold text-lg sm:text-2xl tracking-tighter text-[#8B0000]">
                   CHHABILAL
                 </span>
-                <span className="text-xs sm:text-sm tracking-widest uppercase font-sans text-[#A69076] font-semibold">
+                <span className="hidden xs:inline-block text-[10px] sm:text-xs tracking-widest uppercase font-sans text-[#A69076] font-semibold truncate">
                   Cards & Stationery
                 </span>
               </div>
-              <p className="text-[10px] uppercase tracking-widest text-[#8C847C] font-sans">
-                Manufacturers & Designers • Jharsuguda
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-[#8C847C] font-sans truncate">
+                Manufacturers • Jharsuguda
               </p>
             </div>
           </button>
@@ -133,7 +133,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search 10/5 UK cards, 3D mandap, box files, ID cards..."
-                className="w-full bg-[#F2EDE4] border border-[#E5E1DA] focus:border-[#A69076] focus:bg-white text-[#2D2926] placeholder-[#8C847C] text-xs rounded-full pl-10 pr-4 py-2.5 outline-none transition-all font-sans"
+                className="w-full bg-[#F2EDE4] border border-[#E5E1DA] focus:border-[#A69076] focus:bg-white text-[#2D2926] placeholder-[#8C847C] text-xs rounded-full pl-10 pr-4 py-2 outline-none transition-all font-sans"
               />
               <Search className="w-4 h-4 text-[#8C847C] absolute left-3.5 top-1/2 -translate-y-1/2" />
               {searchQuery && (
@@ -148,11 +148,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Right Action buttons */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <button
               id="wishlist-btn"
               onClick={() => setIsWishlistOpen(true)}
-              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 text-xs uppercase tracking-wider font-sans font-medium text-[#4A443F] bg-[#F2EDE4] border border-[#D1CABF] hover:bg-[#E5E1DA] hover:text-[#8B0000] rounded-lg transition-colors relative"
+              className="flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs uppercase tracking-wider font-sans font-medium text-[#4A443F] bg-[#F2EDE4] border border-[#D1CABF] hover:bg-[#E5E1DA] hover:text-[#8B0000] rounded-lg transition-colors relative"
               title="View Saved Favorites"
             >
               <Heart className={`w-3.5 h-3.5 ${wishlistCount > 0 ? 'text-[#8B0000] fill-[#8B0000]' : 'text-[#8B0000]'}`} />
@@ -167,7 +167,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               id="sample-kit-btn"
               onClick={() => setIsSampleModalOpen(true)}
-              className="hidden lg:flex items-center gap-1.5 px-3.5 py-2 text-xs uppercase tracking-wider font-sans font-medium text-[#4A443F] bg-[#F2EDE4] border border-[#D1CABF] hover:bg-[#E5E1DA] rounded-lg transition-colors"
+              className="hidden lg:flex items-center gap-1.5 px-3 py-2 text-xs uppercase tracking-wider font-sans font-medium text-[#4A443F] bg-[#F2EDE4] border border-[#D1CABF] hover:bg-[#E5E1DA] rounded-lg transition-colors"
             >
               <Gift className="w-3.5 h-3.5 text-[#8B0000]" />
               <span>Sample Kit</span>
@@ -176,12 +176,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               id="quote-cart-btn"
               onClick={() => setIsQuoteDrawerOpen(true)}
-              className="relative flex items-center gap-2 px-3.5 sm:px-4 py-2 text-xs uppercase tracking-wider font-sans font-medium text-white bg-[#8B0000] hover:bg-[#6D0000] rounded-lg shadow-xs transition-all"
+              className="relative flex items-center gap-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs uppercase tracking-wider font-sans font-medium text-white bg-[#8B0000] hover:bg-[#6D0000] rounded-lg shadow-xs transition-all"
             >
-              <ShoppingBag className="w-4 h-4 text-[#F2EDE4]" />
+              <ShoppingBag className="w-3.5 h-3.5 text-[#F2EDE4]" />
               <span className="hidden sm:inline">Inquiry Bag</span>
               {totalQuoteCount > 0 && (
-                <span className="bg-[#FAF9F6] text-[#8B0000] font-bold px-1.5 py-0.2 rounded-full text-[11px] min-w-[20px] text-center">
+                <span className="bg-[#FAF9F6] text-[#8B0000] font-bold px-1.5 py-0.2 rounded-full text-[10px] sm:text-[11px] min-w-[18px] text-center">
                   {totalQuoteCount}
                 </span>
               )}
@@ -191,10 +191,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               id="mobile-menu-toggle-btn"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-[#4A443F] hover:bg-[#F2EDE4] rounded-lg"
+              className="lg:hidden p-1.5 sm:p-2 text-[#4A443F] hover:bg-[#F2EDE4] rounded-lg"
               aria-label="Toggle menu"
             >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5 text-[#4A443F]" />}
+              {isMobileMenuOpen ? <X className="w-5 h-5 text-[#8B0000]" /> : <Menu className="w-5 h-5 text-[#4A443F]" />}
             </button>
           </div>
         </div>

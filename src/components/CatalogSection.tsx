@@ -131,10 +131,10 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
         </div>
 
         {/* Second Row: Budget Filter & Sort Selection */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#E5E1DA] text-xs font-sans">
-          <div className="flex items-center gap-2">
-            <span className="text-[#8C847C] font-medium uppercase tracking-wider">Price Bracket:</span>
-            <div className="flex items-center gap-1.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-[#E5E1DA] text-xs font-sans">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 max-w-full">
+            <span className="text-[#8C847C] font-medium uppercase tracking-wider shrink-0">Price Bracket:</span>
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none max-w-full w-full sm:w-auto">
               {[
                 { id: 'all', label: 'All Budgets' },
                 { id: 'economy', label: 'Budget (< ₹15)' },
@@ -144,7 +144,7 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
                 <button
                   key={b.id}
                   onClick={() => setSelectedBudget(b.id)}
-                  className={`px-2.5 py-1 rounded-md transition-colors ${
+                  className={`px-2.5 py-1 rounded-md transition-colors whitespace-nowrap text-[11px] sm:text-xs ${
                     selectedBudget === b.id
                       ? 'bg-[#8B0000] text-white font-medium shadow-xs'
                       : 'bg-[#FAF9F6] text-[#4A443F] border border-[#E5E1DA] hover:bg-[#E5E1DA]'
@@ -156,9 +156,11 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 ml-auto">
-            <ArrowUpDown className="w-3.5 h-3.5 text-[#8C847C]" />
-            <span className="text-[#8C847C] font-medium uppercase tracking-wider">Sort by:</span>
+          <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto pt-1 sm:pt-0 border-t sm:border-t-0 border-[#E5E1DA]">
+            <div className="flex items-center gap-1">
+              <ArrowUpDown className="w-3.5 h-3.5 text-[#8C847C]" />
+              <span className="text-[#8C847C] font-medium uppercase tracking-wider">Sort by:</span>
+            </div>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}

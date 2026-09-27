@@ -24,28 +24,28 @@ export const Hero: React.FC<HeroProps> = ({
           
           {/* Left Text Content */}
           <div className="lg:col-span-7 space-y-5 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 bg-[#F2EDE4] border border-[#D1CABF] text-[#4A443F] px-3.5 py-1.5 rounded-full text-xs uppercase tracking-widest font-sans font-medium">
-              <Sparkles className="w-3.5 h-3.5 text-[#8B0000]" />
-              <span>Premier Wedding & Stationery House • Jharsuguda</span>
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#F2EDE4] border border-[#D1CABF] text-[#4A443F] px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs uppercase tracking-widest font-sans font-medium max-w-full">
+              <Sparkles className="w-3.5 h-3.5 text-[#8B0000] shrink-0" />
+              <span className="truncate">Premier Wedding & Stationery • Jharsuguda</span>
             </div>
 
-            <h1 className="font-royal text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#2D2926] leading-tight">
+            <h1 className="font-royal text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#2D2926] leading-tight">
               Graceful Wedding Invitations & <br className="hidden sm:block" />
               <span className="text-[#8B0000] font-serif-luxury italic">
                 Artisanal Stationery Supplies
               </span>
             </h1>
 
-            <p className="text-[#4A443F] text-sm sm:text-base max-w-2xl mx-auto lg:mx-0 leading-relaxed font-sans">
+            <p className="text-[#4A443F] text-xs sm:text-base max-w-2xl mx-auto lg:mx-0 leading-relaxed font-sans">
               From our landmark workshop in Brajarajnagar, we craft bespoke wedding cards—featuring 10/5 UK pearl series, glitter finishes, 3D pop-up mandaps, royal velvet scrolls—alongside durable office filing systems and custom school supplies.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-center lg:justify-start gap-2.5 sm:gap-3 pt-2 w-full">
               <button
                 id="hero-explore-cards-btn"
                 onClick={onExploreCards}
-                className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#8B0000] hover:bg-[#6D0000] text-white font-sans text-xs uppercase tracking-widest font-medium shadow-xs transition-all"
+                className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#8B0000] hover:bg-[#6D0000] text-white font-sans text-xs uppercase tracking-widest font-medium shadow-xs transition-all w-full sm:w-auto"
               >
                 <span>Browse 500+ Wedding Designs</span>
                 <ArrowRight className="w-4 h-4 text-[#F2EDE4]" />
@@ -54,7 +54,7 @@ export const Hero: React.FC<HeroProps> = ({
               <button
                 id="hero-open-customizer-btn"
                 onClick={onOpenCustomizer}
-                className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#F2EDE4] hover:bg-[#E5E1DA] border border-[#D1CABF] text-[#2D2926] font-sans text-xs uppercase tracking-widest font-medium transition-all"
+                className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#F2EDE4] hover:bg-[#E5E1DA] border border-[#D1CABF] text-[#2D2926] font-sans text-xs uppercase tracking-widest font-medium transition-all w-full sm:w-auto"
               >
                 <Palette className="w-4 h-4 text-[#8B0000]" />
                 <span>Live Card Designer</span>
@@ -63,7 +63,7 @@ export const Hero: React.FC<HeroProps> = ({
               <button
                 id="hero-stationery-btn"
                 onClick={onExploreStationery}
-                className="flex items-center gap-2 px-4 py-3 rounded-xl text-[#4A443F] hover:text-[#8B0000] hover:bg-[#F2EDE4] font-sans text-xs uppercase tracking-widest font-medium transition-all"
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-[#4A443F] hover:text-[#8B0000] hover:bg-[#F2EDE4] font-sans text-xs uppercase tracking-widest font-medium transition-all w-full sm:w-auto border border-[#E5E1DA] sm:border-transparent"
               >
                 <FileText className="w-3.5 h-3.5 text-[#A69076]" />
                 <span>Office & School Filing</span>
