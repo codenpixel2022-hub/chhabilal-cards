@@ -125,6 +125,9 @@ Please share print sample proofs and delivery details to my location.`;
               <img
                 src={product.imageUrl}
                 alt={product.name}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=900&q=85';
+                }}
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />

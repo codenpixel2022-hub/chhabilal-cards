@@ -109,6 +109,9 @@ export const Hero: React.FC<HeroProps> = ({
                 <img 
                   src="https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=900&q=85" 
                   alt="Chhabilal Wedding Card 10/5 UK Pearl Edition" 
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = './logo.png';
+                  }}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
                 />

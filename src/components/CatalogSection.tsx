@@ -200,13 +200,16 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({
             return (
             <div
               key={product.id}
-              className="group flex flex-col bg-[#FAF9F6] rounded-2xl border border-[#E5E1DA] hover:border-[#A69076] overflow-hidden shadow-xs hover:shadow-md transition-all duration-300"
+              className="group flex flex-col bg-[#FAF9F6] rounded-2xl border border-[#E5E1DA] hover:border-[#8B0000] overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
               {/* Product Image Stage */}
-              <div className="relative aspect-4/3 overflow-hidden bg-[#F2EDE4]">
+              <div className="relative aspect-[4/3] overflow-hidden bg-[#F2EDE4]">
                 <img
                   src={product.imageUrl}
                   alt={product.name}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=900&q=85';
+                  }}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   referrerPolicy="no-referrer"
                 />

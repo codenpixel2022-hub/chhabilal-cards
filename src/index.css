@@ -12,10 +12,20 @@
   }
 }
 
+/* Base interactive elements hover defaults */
+a, button {
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+a:hover {
+  text-decoration-thickness: 1px;
+}
+
 /* Custom scrollbar matching Natural Tones theme */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
   background: #F2EDE4;
@@ -25,6 +35,10 @@
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #A69076;
+  background: #8B0000;
 }
 
+/* Image load fallbacks and smooth transitions */
+img {
+  transition: opacity 0.3s ease-in-out, transform 0.5s ease-out;
+}

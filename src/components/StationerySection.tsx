@@ -88,14 +88,17 @@ export const StationerySection: React.FC<StationerySectionProps> = ({
           return (
           <div
             key={item.id}
-            className="flex flex-col bg-[#FAF9F6] rounded-2xl border border-[#E5E1DA] hover:border-[#A69076] shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden"
+            className="group flex flex-col bg-[#FAF9F6] rounded-2xl border border-[#E5E1DA] hover:border-[#8B0000] shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
           >
             {/* Image Preview */}
-            <div className="relative aspect-16/10 bg-[#F2EDE4] overflow-hidden">
+            <div className="relative aspect-[16/10] bg-[#F2EDE4] overflow-hidden">
               <img
                 src={item.imageUrl}
                 alt={item.name}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?auto=format&fit=crop&w=900&q=85';
+                }}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 referrerPolicy="no-referrer"
               />
               <div className="absolute top-2.5 right-2.5 bg-black/70 backdrop-blur-xs text-[#FAF9F6] text-[10px] font-mono px-2 py-0.5 rounded z-10">

@@ -204,7 +204,7 @@ export const WEDDING_CARDS_DATA: ProductItem[] = [
     description: 'Inspired by sacred Rajasthan & Odisha temple arts, this heritage card highlights divine lotus ponds and holy cows with gold foil embossing.',
     sampleAvailable: true,
     colorsAvailable: ['Temple Ochre', 'Sacred Maroon', 'Forest Green'],
-    imageUrl: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=900&q=85',
+    imageUrl: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=900&q=85',
   },
   {
     id: 'wc-08',
