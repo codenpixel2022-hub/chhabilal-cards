@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Sparkles, Palette, ArrowRight, CheckCircle2, FileText, Box, Film, ChevronDown } from 'lucide-react';
+import { Sparkles, Palette, ArrowRight, CheckCircle2, FileText, Box, ChevronDown } from 'lucide-react';
 import { GatefoldInvitation } from './invitation/GatefoldInvitation';
-import { InvitationFrameAnimation } from './invitation/InvitationFrameAnimation';
+import { ProductShowcaseSection } from './invitation/ProductShowcaseSection';
 import { InvitationContentSection } from './invitation/InvitationContentSection';
 import { InvitationCollectionSection } from './invitation/InvitationCollectionSection';
 import { InvitationDetailsSection } from './invitation/InvitationDetailsSection';
@@ -28,10 +28,8 @@ export const Hero: React.FC<HeroProps> = ({
   onSelectProduct,
   onOpenWhatsApp,
 }) => {
-  const [showcaseMode, setShowcaseMode] = useState<'cinematic-frames' | 'interactive-3d'>('cinematic-frames');
-
-  const scrollToSequence = () => {
-    const el = document.getElementById('card-cinematic-experience');
+  const scrollToShowcase = () => {
+    const el = document.getElementById('flagship-product-showcase');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
@@ -40,7 +38,7 @@ export const Hero: React.FC<HeroProps> = ({
   return (
     <div className="space-y-0">
       
-      {/* SECTION 01: HERO */}
+      {/* HERO LANDING SECTION */}
       <section className="relative overflow-hidden bg-[#FAF9F6] border-b border-[#E5E1DA] py-16 md:py-24 px-4 sm:px-6">
         <div className="absolute inset-0 opacity-40 pointer-events-none bg-[radial-gradient(#D1CABF_1px,transparent_1px)] [background-size:24px_24px]"></div>
         
@@ -68,10 +66,10 @@ export const Hero: React.FC<HeroProps> = ({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 w-full max-w-xl mx-auto">
             <button
               id="hero-explore-invitation-btn"
-              onClick={scrollToSequence}
+              onClick={scrollToShowcase}
               className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl bg-[#8B0000] hover:bg-[#6D0000] text-white font-sans text-xs uppercase tracking-widest font-bold shadow-lg transition-all transform hover:-translate-y-0.5"
             >
-              <span>Explore the Invitation</span>
+              <span>Explore Flagship Showcase</span>
               <ChevronDown className="w-4 h-4 text-[#F2EDE4] animate-bounce" />
             </button>
 
@@ -107,79 +105,54 @@ export const Hero: React.FC<HeroProps> = ({
         </div>
       </section>
 
-      {/* SECTION 02: THE CARD EXPERIENCE (40 FRAME SCROLL) */}
-      <section id="card-cinematic-experience" className="bg-[#FAF9F6] border-b border-[#E5E1DA] py-8 px-4 sm:px-6">
-        <div className="max-w-7xl mx-auto space-y-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between border-b border-[#D1CABF] pb-3 gap-3 font-sans">
-            <div className="flex items-center gap-2">
-              <Film className="w-5 h-5 text-[#8B0000]" />
-              <span className="font-royal font-bold text-base text-[#2D2926]">
-                Section 02 • Cinematic Unfolding Invitation Showcase
-              </span>
+      {/* FLAGSHIP IMAGE & 3D GLB SHOWCASE SECTION */}
+      <section id="flagship-product-showcase" className="bg-[#FAF9F6] border-b border-[#E5E1DA] py-12 px-4 sm:px-6">
+        <ProductShowcaseSection 
+          onOpenCustomizer={onOpenCustomizer}
+          onOpenSampleModal={onOpenSampleModal}
+        />
+
+        <div className="max-w-7xl mx-auto pt-10">
+          <div className="bg-[#F2EDE4]/50 border border-[#D1CABF] rounded-3xl p-6 sm:p-8 space-y-6">
+            <div className="flex items-center justify-between border-b border-[#D1CABF] pb-4">
+              <div className="flex items-center gap-2">
+                <Box className="w-5 h-5 text-[#8B0000]" />
+                <h3 className="font-royal font-bold text-lg text-[#2D2926]">
+                  Interactive 3D Gatefold Card Viewer (.GLB Asset)
+                </h3>
+              </div>
+              <span className="text-xs text-[#8C847C] font-mono">Drag to Rotate & Unfold</span>
             </div>
 
-            <div className="flex items-center bg-[#F2EDE4] p-1 rounded-xl border border-[#D1CABF]">
-              <button
-                onClick={() => setShowcaseMode('cinematic-frames')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all ${
-                  showcaseMode === 'cinematic-frames'
-                    ? 'bg-[#8B0000] text-white shadow-xs'
-                    : 'text-[#4A443F] hover:text-[#2D2926]'
-                }`}
-              >
-                <Film className="w-3.5 h-3.5" />
-                <span>Cinematic Scroll (40 Frames)</span>
-              </button>
-              <button
-                onClick={() => setShowcaseMode('interactive-3d')}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all ${
-                  showcaseMode === 'interactive-3d'
-                    ? 'bg-[#8B0000] text-white shadow-xs'
-                    : 'text-[#4A443F] hover:text-[#2D2926]'
-                }`}
-              >
-                <Box className="w-3.5 h-3.5" />
-                <span>Interactive 3D Gatefold</span>
-              </button>
-            </div>
-          </div>
-
-          {showcaseMode === 'cinematic-frames' ? (
-            <InvitationFrameAnimation 
-              onOpenCustomizer={onOpenCustomizer}
-              onOpenCalculator={onOpenCalculator}
-              onExploreCards={onExploreCards}
-            />
-          ) : (
             <GatefoldInvitation 
               onOpenCustomizer={onOpenCustomizer}
               onOpenCalculator={onOpenCalculator}
             />
-          )}
+          </div>
         </div>
       </section>
 
-      {/* SECTION 03: THE INVITATION CONTENT */}
+      {/* INVITATION CONTENT */}
       <InvitationContentSection
         onOpenCustomizer={onOpenCustomizer}
         onOpenWhatsApp={onOpenWhatsApp}
       />
 
-      {/* SECTION 04: THE COLLECTION */}
+      {/* MASTERPIECE COLLECTION */}
       <InvitationCollectionSection
         onSelectProduct={onSelectProduct}
         onOpenWhatsApp={onOpenWhatsApp}
       />
 
-      {/* SECTION 05: DETAILS MATTER */}
+      {/* CRAFTSMANSHIP DETAILS */}
       <InvitationDetailsSection />
 
-      {/* SECTION 06: CUSTOMIZATION */}
+      {/* LIVE CUSTOMIZER */}
       <InvitationCustomizerSection
         onOpenWhatsApp={onOpenWhatsApp}
       />
 
-      {/* SECTION 07: GRAND CTA */}
+      {/* GRAND CTA */}
       <InvitationCtaSection
         onOpenCustomizer={onOpenCustomizer}
         onOpenCalculator={onOpenCalculator}
