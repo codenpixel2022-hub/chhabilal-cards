@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Sparkles, Play, Pause, RotateCcw, Volume2, ShieldCheck, Film, ChevronDown, Check, ArrowRight } from 'lucide-react';
+import { Sparkles, Play, Pause, RotateCcw, Volume2, ShieldCheck, Film } from 'lucide-react';
 import frame01 from '../../assets/frames/ezgif-frame-001.jpg';
 import frame02 from '../../assets/frames/ezgif-frame-002.jpg';
 import frame03 from '../../assets/frames/ezgif-frame-003.jpg';
@@ -41,6 +41,7 @@ import frame38 from '../../assets/frames/ezgif-frame-038.jpg';
 import frame39 from '../../assets/frames/ezgif-frame-039.jpg';
 import frame40 from '../../assets/frames/ezgif-frame-040.jpg';
 
+// Array of all 40 imported frame image URLs
 const FRAME_SOURCES: string[] = [
   frame01, frame02, frame03, frame04, frame05, frame06, frame07, frame08, frame09, frame10,
   frame11, frame12, frame13, frame14, frame15, frame16, frame17, frame18, frame19, frame20,
@@ -54,39 +55,38 @@ interface InvitationFrameAnimationProps {
   className?: string;
   onOpenCustomizer?: () => void;
   onOpenCalculator?: () => void;
-  onExploreCards?: () => void;
 }
 
 export const InvitationFrameAnimation: React.FC<InvitationFrameAnimationProps> = ({
   className = '',
   onOpenCustomizer,
   onOpenCalculator,
-  onExploreCards,
 }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // Preloaded Image elements cache
   const imagesRef = useRef<HTMLImageElement[]>([]);
-  const currentFrameFloatRef = useRef<number>(0);
+  const currentFrameIndexRef = useRef<number>(0);
   const targetFrameIndexRef = useRef<number>(0);
   const animFrameIdRef = useRef<number | null>(null);
 
-  const [loadProgress, setLoadProgress] = useState<number>(0);
+  const [loadProgress, setLoadProgress] = useState<number>(0); // 0 to 100%
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [activeFrameIndex, setActiveFrameIndex] = useState<number>(0);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState<boolean>(false);
-  const [isPlayingAuto, setIsPlayingAuto] = useState<boolean>(false);
 
   // Check reduced motion accessibility
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
+
     const handleChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // 1. Preload 40 frames into memory
+  // 1. Preload all 40 frames into RAM cache
   useEffect(() => {
     let loadedCount = 0;
     const imgArray: HTMLImageElement[] = new Array(TOTAL_FRAMES);
@@ -100,13 +100,16 @@ export const InvitationFrameAnimation: React.FC<InvitationFrameAnimationProps> =
         setLoadProgress(pct);
 
         if (idx === 0) {
+          // Render first frame immediately
           renderFrameToCanvas(0);
         }
+
         if (loadedCount === TOTAL_FRAMES) {
           setIsLoaded(true);
         }
       };
-      img.onerror = () => {
+      img.onerror = (err) => {
+        console.warn(`Frame ${idx + 1} failed to load:`, err);
         loadedCount++;
         if (loadedCount === TOTAL_FRAMES) setIsLoaded(true);
       };
@@ -120,18 +123,17 @@ export const InvitationFrameAnimation: React.FC<InvitationFrameAnimationProps> =
     };
   }, []);
 
-  // 2. High-DPI Canvas Rendering function
+  // 2. High-DPI Canvas Rendering function (Contain Scaling)
   const renderFrameToCanvas = useCallback((frameIdx: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const roundedIndex = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(frameIdx)));
-    const img = imagesRef.current[roundedIndex];
-
+    const img = imagesRef.current[frameIdx];
     if (!img || !img.complete || img.naturalWidth === 0) {
-      for (let i = roundedIndex - 1; i >= 0; i--) {
+      // Fallback: draw nearest available frame
+      for (let i = frameIdx - 1; i >= 0; i--) {
         if (imagesRef.current[i] && imagesRef.current[i].complete) {
           renderFrameToCanvas(i);
           return;
@@ -140,10 +142,11 @@ export const InvitationFrameAnimation: React.FC<InvitationFrameAnimationProps> =
       return;
     }
 
+    // High-DPI Resolution Scaling
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const rect = canvas.getBoundingClientRect();
-    const cssWidth = rect.width || 1024;
-    const cssHeight = rect.height || 576;
+    const cssWidth = rect.width || 900;
+    const cssHeight = rect.height || 506; // 16:9 ratio
 
     if (canvas.width !== cssWidth * dpr || canvas.height !== cssHeight * dpr) {
       canvas.width = cssWidth * dpr;
@@ -154,6 +157,7 @@ export const InvitationFrameAnimation: React.FC<InvitationFrameAnimationProps> =
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, cssWidth, cssHeight);
 
+    // Aspect Ratio Contain Math (16:9)
     const imgWidth = img.naturalWidth || 1920;
     const imgHeight = img.naturalHeight || 1080;
     const imgAspect = imgWidth / imgHeight;
@@ -172,39 +176,14 @@ export const InvitationFrameAnimation: React.FC<InvitationFrameAnimationProps> =
       offsetY = (cssHeight - drawH) / 2;
     }
 
+    // Smooth Canvas Draw
     ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
     ctx.restore();
   }, []);
 
-  // Smooth LERP loop for silky frame transitions
-  const startLerpLoop = useCallback(() => {
-    if (animFrameIdRef.current) return;
-
-    const loop = () => {
-      const target = targetFrameIndexRef.current;
-      const current = currentFrameFloatRef.current;
-      const diff = target - current;
-
-      if (Math.abs(diff) > 0.01) {
-        currentFrameFloatRef.current += diff * 0.18; // smooth spring physics factor
-        const currentInt = Math.round(currentFrameFloatRef.current);
-        renderFrameToCanvas(currentInt);
-        setActiveFrameIndex(currentInt);
-        animFrameIdRef.current = requestAnimationFrame(loop);
-      } else {
-        currentFrameFloatRef.current = target;
-        renderFrameToCanvas(target);
-        setActiveFrameIndex(target);
-        animFrameIdRef.current = null;
-      }
-    };
-
-    animFrameIdRef.current = requestAnimationFrame(loop);
-  }, [renderFrameToCanvas]);
-
-  // 3. Scroll Progress to Frame Mapping
+  // 3. Scroll Progress to Frame Index Mapping
   useEffect(() => {
-    if (prefersReducedMotion || isPlayingAuto) return;
+    if (prefersReducedMotion) return;
 
     const handleScroll = () => {
       const section = sectionRef.current;
@@ -216,12 +195,25 @@ export const InvitationFrameAnimation: React.FC<InvitationFrameAnimationProps> =
 
       if (totalScrollableHeight <= 0) return;
 
+      // Scroll Progress inside sticky section (0.0 to 1.0)
       const currentScroll = -rect.top;
       const rawProgress = Math.max(0, Math.min(1, currentScroll / totalScrollableHeight));
 
-      const targetFrame = Math.round(rawProgress * (TOTAL_FRAMES - 1));
+      // Calculate Target Frame Index (0 to 39)
+      const targetFrame = Math.floor(rawProgress * (TOTAL_FRAMES - 1));
       targetFrameIndexRef.current = targetFrame;
-      startLerpLoop();
+
+      // Schedule frame render inside requestAnimationFrame
+      if (!animFrameIdRef.current) {
+        animFrameIdRef.current = requestAnimationFrame(() => {
+          if (currentFrameIndexRef.current !== targetFrameIndexRef.current) {
+            currentFrameIndexRef.current = targetFrameIndexRef.current;
+            renderFrameToCanvas(currentFrameIndexRef.current);
+            setActiveFrameIndex(currentFrameIndexRef.current);
+          }
+          animFrameIdRef.current = null;
+        });
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -231,61 +223,18 @@ export const InvitationFrameAnimation: React.FC<InvitationFrameAnimationProps> =
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
+      if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
     };
-  }, [prefersReducedMotion, isPlayingAuto, startLerpLoop]);
+  }, [prefersReducedMotion, renderFrameToCanvas]);
 
-  // Auto-play feature toggle
-  useEffect(() => {
-    if (!isPlayingAuto) return;
-    let frameTimer: ReturnType<typeof setInterval>;
-
-    frameTimer = setInterval(() => {
-      targetFrameIndexRef.current = (targetFrameIndexRef.current + 1) % TOTAL_FRAMES;
-      startLerpLoop();
-    }, 120);
-
-    return () => clearInterval(frameTimer);
-  }, [isPlayingAuto, startLerpLoop]);
-
-  // Scrub slider input change
+  // Handle manual slider scrubbing
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const idx = parseInt(e.target.value, 10);
+    currentFrameIndexRef.current = idx;
     targetFrameIndexRef.current = idx;
-    currentFrameFloatRef.current = idx;
     setActiveFrameIndex(idx);
     renderFrameToCanvas(idx);
   };
-
-  // Synchronized contextual text lines based on frame milestone
-  const getContextualCaption = () => {
-    if (activeFrameIndex < 10) {
-      return {
-        title: "Designed to be opened.",
-        subtitle: "A royal 3-panel gatefold wrapped in imperial crimson and embossed antique gold deckle borders.",
-        phase: "Phase 1: Royal Exterior Facade"
-      };
-    } else if (activeFrameIndex < 24) {
-      return {
-        title: "Created to be remembered.",
-        subtitle: "The gold wax seal breaks gently as the silk band slides off, revealing multi-leaf ceremonial inserts.",
-        phase: "Phase 2: Unbanding & Unfolding"
-      };
-    } else if (activeFrameIndex < 35) {
-      return {
-        title: "Unfolding every sacred detail.",
-        subtitle: "Gilded Odia and Devanagari typography with intricate laser-cut floral mandap motifs.",
-        phase: "Phase 3: Interior Reveal"
-      };
-    } else {
-      return {
-        title: "Your Story. Eternally Invited.",
-        subtitle: "Crafted by Chhabilal Cards Jharsuguda using imported 350 GSM pearlescent linen board.",
-        phase: "Phase 4: Full Luxury Showcase"
-      };
-    }
-  };
-
-  const caption = getContextualCaption();
 
   return (
     <div 
@@ -293,24 +242,27 @@ export const InvitationFrameAnimation: React.FC<InvitationFrameAnimationProps> =
       className={`w-full relative font-sans ${className}`}
       style={{ height: prefersReducedMotion ? 'auto' : '260vh' }}
     >
-      {/* Sticky Canvas Container */}
-      <div className={`${prefersReducedMotion ? 'relative py-8' : 'sticky top-16 md:top-20'} w-full flex flex-col items-center justify-center space-y-6 py-4`}>
+      {/* Sticky Cinematic Container */}
+      <div className={`${prefersReducedMotion ? 'relative' : 'sticky top-16 md:top-20'} w-full flex flex-col items-center justify-center space-y-4 py-4`}>
         
-        {/* Main Canvas Viewport with Luxury Styling */}
-        <div className="w-full max-w-6xl aspect-16/9 relative rounded-3xl overflow-hidden bg-radial from-[#FAF6EE] via-[#F2EDE4] to-[#EBE4D8] border border-[#D4AF37]/40 shadow-2xl flex items-center justify-center group">
+        {/* Main Canvas Viewport Box */}
+        <div className="w-full max-w-5xl aspect-16/9 relative rounded-3xl overflow-hidden bg-radial from-[#FAF6EE] via-[#F2EDE4] to-[#EBE4D8] border border-[#D4AF37]/40 shadow-2xl flex items-center justify-center">
           
-          {/* Preloader Overlay */}
+          {/* Preloader Screen Overlay */}
           {!isLoaded && (
-            <div className="absolute inset-0 z-30 bg-[#FAF9F6] flex flex-col items-center justify-center space-y-4 px-6 text-center">
+            <div className="absolute inset-0 z-20 bg-[#FAF9F6] flex flex-col items-center justify-center space-y-4 px-6 text-center">
               <div className="w-14 h-14 rounded-full border-4 border-[#D4AF37] border-t-transparent animate-spin"></div>
+              
               <div className="space-y-1">
                 <h4 className="font-royal text-base font-bold text-[#8B0000]">
-                  Preparing Royal Invitation Animation...
+                  Preparing Your Royal Invitation...
                 </h4>
                 <p className="text-xs text-[#8C847C] font-mono">
-                  Loading Frame Cache: {loadProgress}%
+                  Loading Cinematic Frames: {loadProgress}%
                 </p>
               </div>
+
+              {/* Progress Bar */}
               <div className="w-64 h-2 bg-[#E5E1DA] rounded-full overflow-hidden border border-[#D1CABF]">
                 <div 
                   className="h-full bg-[#8B0000] transition-all duration-200"
@@ -320,71 +272,35 @@ export const InvitationFrameAnimation: React.FC<InvitationFrameAnimationProps> =
             </div>
           )}
 
-          {/* HTML5 Canvas */}
+          {/* Single HTML5 Animation Canvas */}
           <canvas
             ref={canvasRef}
-            className="w-full h-full object-contain block drop-shadow-2xl cursor-ns-resize transition-transform duration-500 hover:scale-[1.01]"
+            className="w-full h-full object-contain block drop-shadow-xl cursor-ns-resize"
           />
 
-          {/* Overlay Text Sync (Milestone Overlay) */}
-          <div className="absolute inset-x-6 top-8 z-10 flex flex-col items-center text-center space-y-1 pointer-events-none">
-            <span className="text-[10px] uppercase tracking-widest font-mono text-[#8B0000] font-bold bg-[#FAF9F6]/90 backdrop-blur-md px-3 py-1 rounded-full border border-[#D4AF37]/30 shadow-xs">
-              {caption.phase}
+          {/* Floating Top Badge */}
+          <div className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-[#FAF9F6]/90 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-[#D4AF37]/40 shadow-xs">
+            <Film className="w-4 h-4 text-[#8B0000] animate-pulse" />
+            <span className="text-xs font-semibold text-[#8B0000] uppercase tracking-wider">
+              Cinematic Unfolding • Frame {activeFrameIndex + 1} / 40
             </span>
-            <h3 className="font-royal text-xl sm:text-3xl font-bold text-[#2D2926] drop-shadow-xs transition-all duration-300">
-              {caption.title}
-            </h3>
-            <p className="text-xs sm:text-sm text-[#4A443F] max-w-xl hidden sm:block drop-shadow-xs font-serif-luxury italic">
-              "{caption.subtitle}"
-            </p>
           </div>
 
-          {/* Floating Top Controls */}
-          <div className="absolute top-4 left-4 z-20 flex items-center gap-2">
-            <div className="flex items-center gap-2 bg-[#FAF9F6]/95 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-[#D4AF37]/40 shadow-xs">
-              <Film className="w-4 h-4 text-[#8B0000] animate-pulse" />
-              <span className="text-xs font-semibold text-[#8B0000] uppercase tracking-wider">
-                Frame {activeFrameIndex + 1} / {TOTAL_FRAMES}
-              </span>
-            </div>
-          </div>
-
-          {/* Auto Play & Reset Actions */}
-          <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-            <button
-              onClick={() => setIsPlayingAuto(!isPlayingAuto)}
-              className="flex items-center gap-1.5 bg-[#FAF9F6]/95 hover:bg-white backdrop-blur-md px-3 py-1.5 rounded-full border border-[#D4AF37]/40 shadow-xs text-xs font-semibold text-[#2D2926] transition-all"
-              title={isPlayingAuto ? 'Pause animation' : 'Auto-play 40 frames'}
-            >
-              {isPlayingAuto ? <Pause className="w-3.5 h-3.5 text-[#8B0000]" /> : <Play className="w-3.5 h-3.5 text-[#8B0000]" />}
-              <span className="hidden sm:inline">{isPlayingAuto ? 'Pause' : 'Auto Play'}</span>
-            </button>
-            <button
-              onClick={() => {
-                targetFrameIndexRef.current = 0;
-                currentFrameFloatRef.current = 0;
-                setActiveFrameIndex(0);
-                renderFrameToCanvas(0);
-              }}
-              className="bg-[#FAF9F6]/95 hover:bg-white backdrop-blur-md p-1.5 rounded-full border border-[#D4AF37]/40 shadow-xs text-[#2D2926] transition-all"
-              title="Reset to Frame 1"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-[#8B0000]" />
-            </button>
-          </div>
-
-          {/* Bottom Floating Scrubber Bar */}
-          <div className="absolute bottom-4 inset-x-4 z-20 bg-[#FAF9F6]/95 backdrop-blur-md p-3.5 rounded-2xl border border-[#D4AF37]/40 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3">
+          {/* Floating Bottom Control Bar */}
+          <div className="absolute bottom-4 left-4 right-4 z-10 bg-[#FAF9F6]/95 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-[#D4AF37]/40 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <Sparkles className="w-4 h-4 text-[#D4AF37]" />
               <span className="text-xs font-semibold text-[#2D2926] uppercase tracking-wider">
-                {caption.phase}
+                {activeFrameIndex < 10 ? 'Phase 1: Exterior Facade' : 
+                 activeFrameIndex < 22 ? 'Phase 2: Unbanding & Opening' : 
+                 activeFrameIndex < 32 ? 'Phase 3: Interior Reveal' : 
+                 'Phase 4: Full Luxury Showcase'}
               </span>
             </div>
 
-            <div className="flex items-center gap-3 w-full sm:max-w-md">
-              <span className="text-[10px] font-bold text-[#8C847C] uppercase tracking-wider shrink-0">
-                Scroll / Drag Frame:
+            {/* Interactive Frame Slider Scrub */}
+            <div className="flex items-center gap-3 w-full sm:max-w-xs">
+              <span className="text-[11px] font-bold text-[#8C847C] uppercase tracking-wider shrink-0">
+                Scroll / Scrub:
               </span>
               <input
                 type="range"
@@ -402,32 +318,21 @@ export const InvitationFrameAnimation: React.FC<InvitationFrameAnimationProps> =
 
         </div>
 
-        {/* Floating Action Bar Below Canvas */}
-        <div className="flex flex-wrap items-center justify-center gap-3 w-full max-w-6xl">
+        {/* Action Helper CTAs */}
+        <div className="flex flex-wrap items-center justify-center gap-3 w-full max-w-5xl">
           {onOpenCustomizer && (
             <button
               onClick={onOpenCustomizer}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#8B0000] hover:bg-[#6D0000] text-white text-xs uppercase tracking-widest font-semibold shadow-md transition-all transform hover:-translate-y-0.5"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#8B0000] hover:bg-[#6D0000] text-white text-xs uppercase tracking-wider font-semibold shadow-md transition-all"
             >
               <Sparkles className="w-4 h-4 text-[#D4AF37]" />
-              <span>Customize Names & Shlokas</span>
+              <span>Personalize Names & Shlokas</span>
             </button>
           )}
-
-          {onExploreCards && (
-            <button
-              onClick={onExploreCards}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#F2EDE4] hover:bg-[#E5E1DA] border border-[#D1CABF] text-[#2D2926] text-xs uppercase tracking-widest font-semibold shadow-xs transition-colors"
-            >
-              <span>Explore All 500+ Designs</span>
-              <ArrowRight className="w-4 h-4 text-[#8B0000]" />
-            </button>
-          )}
-
           {onOpenCalculator && (
             <button
               onClick={onOpenCalculator}
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#FAF9F6] hover:bg-[#F2EDE4] border border-[#D1CABF] text-[#4A443F] text-xs uppercase tracking-wider font-semibold transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#FAF9F6] hover:bg-[#F2EDE4] border border-[#D1CABF] text-[#2D2926] text-xs uppercase tracking-wider font-semibold shadow-xs transition-colors"
             >
               <span>Calculate Bulk Printing Rates</span>
             </button>
