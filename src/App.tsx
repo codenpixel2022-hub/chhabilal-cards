@@ -166,6 +166,8 @@ export default function App() {
               setActiveTab('calculator');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
+            onOpenSampleModal={() => setIsSampleModalOpen(true)}
+            onAddToQuote={handleAddToQuote}
           />
         )}
 
