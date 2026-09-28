@@ -13,7 +13,7 @@ export default defineConfig(() => {
       },
     },
     optimizeDeps: {
-      include: ['three', 'gsap', 'gsap/ScrollTrigger', 'lucide-react', 'canvas-confetti'],
+      include: ['three', 'gsap', 'gsap/ScrollTrigger', 'lucide-react', 'canvas-confetti', '@supabase/supabase-js'],
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.

@@ -13,10 +13,15 @@ import {
   X,
   MessageCircle,
   Award,
-  Heart
+  Heart,
+  User,
+  ShieldCheck,
+  ShoppingCart
 } from 'lucide-react';
 import { BUSINESS_INFO } from '../data/reviews';
 import { QuoteItem } from '../types';
+import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 interface NavbarProps {
   activeTab: string;
@@ -28,6 +33,8 @@ interface NavbarProps {
   setIsSampleModalOpen: (open: boolean) => void;
   wishlistCount: number;
   setIsWishlistOpen: (open: boolean) => void;
+  setIsCartOpen: (open: boolean) => void;
+  setIsAuthOpen: (open: boolean) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -40,8 +47,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   setIsSampleModalOpen,
   wishlistCount,
   setIsWishlistOpen,
+  setIsCartOpen,
+  setIsAuthOpen,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, isAdmin } = useAuth();
+  const { totalQuantity } = useCart();
 
   const totalQuoteCount = quoteItems.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -148,11 +159,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Right Action buttons */}
-          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             <button
               id="wishlist-btn"
               onClick={() => setIsWishlistOpen(true)}
-              className="flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs uppercase tracking-wider font-sans font-medium text-[#4A443F] bg-[#F2EDE4] border border-[#D1CABF] hover:bg-[#E5E1DA] hover:text-[#8B0000] rounded-lg transition-colors relative"
+              className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs uppercase tracking-wider font-sans font-medium text-[#4A443F] bg-[#F2EDE4] border border-[#D1CABF] hover:bg-[#E5E1DA] hover:text-[#8B0000] rounded-lg transition-colors relative"
               title="View Saved Favorites"
             >
               <Heart className={`w-3.5 h-3.5 ${wishlistCount > 0 ? 'text-[#8B0000] fill-[#8B0000]' : 'text-[#8B0000]'}`} />
@@ -164,19 +175,51 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </button>
 
+            {/* Wholesale Cart Drawer Button */}
             <button
-              id="sample-kit-btn"
-              onClick={() => setIsSampleModalOpen(true)}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-2 text-xs uppercase tracking-wider font-sans font-medium text-[#4A443F] bg-[#F2EDE4] border border-[#D1CABF] hover:bg-[#E5E1DA] rounded-lg transition-colors"
+              id="wholesale-cart-btn"
+              onClick={() => setIsCartOpen(true)}
+              className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs uppercase tracking-wider font-sans font-medium text-[#4A443F] bg-[#F2EDE4] border border-[#D1CABF] hover:bg-[#E5E1DA] hover:text-[#8B0000] rounded-lg transition-colors relative"
+              title="View Wholesale Cart"
             >
-              <Gift className="w-3.5 h-3.5 text-[#8B0000]" />
-              <span>Sample Kit</span>
+              <ShoppingCart className="w-3.5 h-3.5 text-[#8B0000]" />
+              <span className="hidden sm:inline">Cart</span>
+              {totalQuantity > 0 && (
+                <span className="bg-[#8B0000] text-white font-bold px-1.5 py-0.2 rounded-full text-[10px] min-w-[18px] text-center">
+                  {totalQuantity}
+                </span>
+              )}
             </button>
+
+            {/* Account / Admin Portal Button */}
+            {user ? (
+              <button
+                onClick={() => {
+                  if (isAdmin) setActiveTab('admin');
+                  else setActiveTab('account');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs uppercase tracking-wider font-sans font-semibold text-[#8B0000] bg-[#F2EDE4] border border-[#D1CABF] hover:bg-[#E5E1DA] rounded-lg transition-colors"
+                title={isAdmin ? 'Go to Admin Dashboard' : 'My Account'}
+              >
+                {isAdmin ? <ShieldCheck className="w-3.5 h-3.5 text-[#8B0000]" /> : <User className="w-3.5 h-3.5 text-[#8B0000]" />}
+                <span className="hidden md:inline">{isAdmin ? 'Admin' : 'Account'}</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsAuthOpen(true)}
+                className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs uppercase tracking-wider font-sans font-semibold text-[#2D2926] bg-[#F2EDE4] border border-[#D1CABF] hover:bg-[#E5E1DA] rounded-lg transition-colors"
+                title="Sign In / Register"
+              >
+                <User className="w-3.5 h-3.5 text-[#8B0000]" />
+                <span className="hidden md:inline">Sign In</span>
+              </button>
+            )}
 
             <button
               id="quote-cart-btn"
               onClick={() => setIsQuoteDrawerOpen(true)}
-              className="relative flex items-center gap-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2 text-xs uppercase tracking-wider font-sans font-medium text-white bg-[#8B0000] hover:bg-[#6D0000] rounded-lg shadow-xs transition-all"
+              className="relative flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs uppercase tracking-wider font-sans font-medium text-white bg-[#8B0000] hover:bg-[#6D0000] rounded-lg shadow-xs transition-all"
             >
               <ShoppingBag className="w-3.5 h-3.5 text-[#F2EDE4]" />
               <span className="hidden sm:inline">Inquiry Bag</span>

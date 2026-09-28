@@ -11,19 +11,40 @@ import { ProductDetailModal } from './components/ProductDetailModal';
 import { QuoteInquiryDrawer } from './components/QuoteInquiryDrawer';
 import { SampleKitModal } from './components/SampleKitModal';
 import { WishlistDrawer } from './components/WishlistDrawer';
-import { ProductItem, QuoteItem } from './types';
+
+// New Feature Modules & Contexts
+import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
+import { WebsiteCmsProvider, useWebsiteCms } from './context/WebsiteCmsContext';
+import { AuthModal } from './components/auth/AuthModal';
+import { CartDrawer } from './components/cart/CartDrawer';
+import { CheckoutModal } from './components/checkout/CheckoutModal';
+import { CustomerDashboard } from './components/account/CustomerDashboard';
+import { AdminDashboard } from './components/admin/AdminDashboard';
+import { SeoHead } from './components/seo/SeoHead';
+
+import { ProductItem, QuoteItem, Order } from './types';
 import { WEDDING_CARDS_DATA, ALL_PRODUCTS } from './data/products';
+import { generateOrderWhatsappUrl } from './services/whatsapp';
 
 const WISHLIST_STORAGE_KEY = 'chhabilal_cards_wishlist_ids';
 
-export default function App() {
+function AppContent() {
   const [activeTab, setActiveTab] = useState<string>('wedding-cards');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
   const [customizerProduct, setCustomizerProduct] = useState<ProductItem | null>(null);
+
+  // Overlay States
   const [isQuoteDrawerOpen, setIsQuoteDrawerOpen] = useState<boolean>(false);
   const [isSampleModalOpen, setIsSampleModalOpen] = useState<boolean>(false);
   const [isWishlistDrawerOpen, setIsWishlistDrawerOpen] = useState<boolean>(false);
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState<boolean>(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState<boolean>(false);
+  const [completedOrder, setCompletedOrder] = useState<{ order: Order; whatsappUrl?: string } | null>(null);
+
+  const { isSectionEnabled } = useWebsiteCms();
 
   // Local Storage initialized Wishlist State
   const [wishlistIds, setWishlistIds] = useState<string[]>(() => {
@@ -36,11 +57,9 @@ export default function App() {
     } catch (err) {
       console.error('Failed to read wishlist from localStorage:', err);
     }
-    // Default starter favorites
     return ['wc-01', 'wc-03'];
   });
 
-  // Synchronize Wishlist changes with localStorage
   useEffect(() => {
     try {
       localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(wishlistIds));
@@ -131,7 +150,11 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-[#2D2926] font-sans antialiased flex flex-col selection:bg-[#F2EDE4] selection:text-[#8B0000]">
-      {/* Sticky Natural Tones Navbar */}
+      
+      {/* SEO & Structured Data Head Injector */}
+      <SeoHead product={selectedProduct || undefined} />
+
+      {/* Sticky Navbar */}
       <Navbar 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -142,12 +165,14 @@ export default function App() {
         setIsSampleModalOpen={setIsSampleModalOpen}
         wishlistCount={wishlistIds.length}
         setIsWishlistOpen={setIsWishlistDrawerOpen}
+        setIsCartOpen={setIsCartDrawerOpen}
+        setIsAuthOpen={setIsAuthModalOpen}
       />
 
-      {/* Main View Area */}
+      {/* Main View Router */}
       <main className="flex-1">
-        {/* Render Hero if on main tabs */}
-        {(activeTab === 'wedding-cards' || activeTab === 'stationery') && !searchQuery && (
+        {/* Render Hero if enabled in CMS and on main catalog tabs */}
+        {(activeTab === 'wedding-cards' || activeTab === 'stationery') && !searchQuery && isSectionEnabled('sec-hero') && (
           <Hero 
             onExploreCards={() => {
               setActiveTab('wedding-cards');
@@ -171,8 +196,8 @@ export default function App() {
           />
         )}
 
-        {/* Dynamic Section based on Active Tab or Search */}
-        {activeTab === 'wedding-cards' && (
+        {/* Dynamic Views */}
+        {activeTab === 'wedding-cards' && isSectionEnabled('sec-wedding') && (
           <CatalogSection 
             searchQuery={searchQuery}
             onSelectProduct={(p) => setSelectedProduct(p)}
@@ -209,9 +234,28 @@ export default function App() {
         {activeTab === 'about' && (
           <AboutContact />
         )}
+
+        {/* Customer Account Portal */}
+        {activeTab === 'account' && (
+          <CustomerDashboard 
+            onExploreCards={() => {
+              setActiveTab('wedding-cards');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenCustomizer={() => {
+              setActiveTab('customizer');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
+        {/* Admin SaaS Dashboard */}
+        {activeTab === 'admin' && (
+          <AdminDashboard />
+        )}
       </main>
 
-      {/* Natural Tones Minimalist Dark Footer */}
+      {/* Footer */}
       <Footer 
         setActiveTab={setActiveTab}
         onOpenSampleModal={() => setIsSampleModalOpen(true)}
@@ -251,6 +295,76 @@ export default function App() {
         onClearAll={handleClearAllQuotes}
       />
 
+      <CartDrawer 
+        isOpen={isCartDrawerOpen}
+        onClose={() => setIsCartDrawerOpen(false)}
+        onOpenCheckout={() => {
+          setIsCartDrawerOpen(false);
+          setIsCheckoutModalOpen(true);
+        }}
+        onOpenAuth={() => {
+          setIsCartDrawerOpen(false);
+          setIsAuthModalOpen(true);
+        }}
+      />
+
+      <AuthModal 
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={() => {
+          setIsCheckoutModalOpen(true);
+        }}
+      />
+
+      <CheckoutModal 
+        isOpen={isCheckoutModalOpen}
+        onClose={() => setIsCheckoutModalOpen(false)}
+        onOrderSuccess={(order, whatsappUrl) => {
+          setCompletedOrder({ order, whatsappUrl });
+        }}
+      />
+
+      {/* Order Success Confirmation Modal */}
+      {completedOrder && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 font-sans">
+          <div className="bg-[#FAF9F6] border border-[#D4AF37]/50 rounded-3xl p-6 max-w-md w-full text-center space-y-4 shadow-2xl">
+            <div className="w-14 h-14 rounded-full bg-green-100 text-green-700 flex items-center justify-center mx-auto">
+              ✓
+            </div>
+            <h3 className="font-royal text-2xl font-bold text-[#8B0000]">Order Request Received!</h3>
+            <p className="text-xs text-[#2D2926] font-semibold">
+              Order Number: <span className="font-mono text-[#8B0000]">{completedOrder.order.orderNumber}</span>
+            </p>
+            <p className="text-xs text-[#4A443F]">
+              Your wholesale order request has been logged. Chhabilal Cards team in Brajarajnagar will generate your digital proof and invoice within 12 hours.
+            </p>
+
+            <div className="space-y-2 pt-2">
+              {completedOrder.whatsappUrl && (
+                <a
+                  href={completedOrder.whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-[#8B0000] text-white text-xs uppercase tracking-wider font-semibold rounded-xl"
+                >
+                  <span>Notify Shop Directly on WhatsApp</span>
+                </a>
+              )}
+
+              <button
+                onClick={() => {
+                  setCompletedOrder(null);
+                  setActiveTab('account');
+                }}
+                className="w-full py-2 bg-[#F2EDE4] hover:bg-[#E5E1DA] text-[#2D2926] text-xs uppercase tracking-wider font-semibold rounded-xl"
+              >
+                View Order in My Account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <SampleKitModal 
         isOpen={isSampleModalOpen}
         onClose={() => setIsSampleModalOpen(false)}
@@ -259,3 +373,14 @@ export default function App() {
   );
 }
 
+export default function App() {
+  return (
+    <AuthProvider>
+      <WebsiteCmsProvider>
+        <CartProvider>
+          <AppContent />
+        </CartProvider>
+      </WebsiteCmsProvider>
+    </AuthProvider>
+  );
+}
